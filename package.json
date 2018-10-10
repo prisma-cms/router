@@ -1,7 +1,7 @@
 {
-  "name": "@prisma-cms/e-commerce",
+  "name": "@prisma-cms/router",
   "version": "1.0.0",
-  "description": "Describe @prisma-cms/e-commerce here",
+  "description": "",
   "main": "lib/index.js",
   "module": "es/index.js",
   "files": [
@@ -13,17 +13,26 @@
     "build": "nwb build-web-module",
     "clean": "nwb clean-module",
     "prepublishOnly": "npm run build",
-    "test": "nwb test",
+    "test": "node tests/",
+    "test-nwb": "nwb test",
     "test:coverage": "nwb test --coverage",
     "test:watch": "nwb test --server"
   },
   "dependencies": {
+    "@prisma-cms/prisma-module": "^1.0.4-beta",
+    "graphql": "^14.0.2",
+    "merge-graphql-schemas": "^1.5.7"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
     "nwb": "0.23.x"
   },
   "author": "",
-  "homepage": "",
   "license": "MIT",
   "repository": ""
 }
