@@ -10,7 +10,7 @@
     "umd"
   ],
   "scripts": {
-    "build": "nwb build-web-module",
+    "build": "nwb build-web-module --copy-files",
     "clean": "nwb clean-module",
     "prepublishOnly": "npm run build",
     "test": "node tests/",
