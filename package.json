@@ -1,6 +1,6 @@
 {
   "name": "@prisma-cms/router",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Router module for @prisma-cms",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -19,11 +19,11 @@
     "test:watch": "nwb test --server"
   },
   "dependencies": {
-    "@prisma-cms/prisma-module": "^1.0.4-beta",
-    "graphql": "^14.0.2",
-    "merge-graphql-schemas": "^1.5.7"
   },
   "devDependencies": {
+    "@prisma-cms/prisma-module": "^1.0.4-beta",
+    "graphql": "^0.13.2",
+    "merge-graphql-schemas": "^1.5.7",
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/polyfill": "^7.0.0",
