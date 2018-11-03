@@ -4,7 +4,7 @@ type Route {
   name: String
   path: String! @unique
   exact: Boolean! @default(value: false)
-  component: RouteComponent!
+  component: String!
   Parent: Route @relation(name: "Routes")
   Childs: [Route!]! @relation(name: "Routes")
 }

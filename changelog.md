@@ -1,3 +1,8 @@
+1.1.0
+==================================
+- Migrate on .mjs
+- Rename @prisma-cms/router to @prisma-cms/router-module
+
 1.0.2
 ==================================
 - Fix dependencies

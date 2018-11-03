@@ -1,46 +1,40 @@
 
+
 import chalk from "chalk";
 
-import { fileLoader, mergeTypes } from 'merge-graphql-schemas';
-
 import PrismaModule from "@prisma-cms/prisma-module";
+
+import MergeSchema from 'merge-graphql-schemas';
+
+import fs from "fs";
+
+import path from 'path';
+
+const moduleURL = new URL(import.meta.url);
+
+const __dirname = path.dirname(moduleURL.pathname);
+
+const { createWriteStream, unlinkSync } = fs;
+
+const { fileLoader, mergeTypes } = MergeSchema
+
 
 
 class RouteModule extends PrismaModule {
 
-
-  // constructor(options = {}) {
-
-  //   let {
-  //     modules = [],
-  //   } = options;
-
-  //   modules = modules.concat([
-  //   ]);
-
-  //   Object.assign(options, {
-  //     modules,
-  //   });
-
-  //   super(options);
-
-  // }
-
+ 
 
   getSchema(types = []) {
+
 
     let schema = fileLoader(__dirname + '/schema/database/', {
       recursive: true,
     });
 
+
     if (schema) {
       types = types.concat(schema);
     }
-
-
-    let routeComponentTypes = this.getRouteComponentTypes();
-
-    types.push(routeComponentTypes);
 
 
     let typesArray = super.getSchema(types);
@@ -52,13 +46,23 @@ class RouteModule extends PrismaModule {
 
   getApiSchema(types = []) {
 
-    let apiSchema = super.getApiSchema(types, []);
+
+    let baseSchema = [];
+
+    let schemaFile = "src/schema/generated/prisma.graphql";
+
+    if (fs.existsSync(schemaFile)) {
+      baseSchema = fs.readFileSync(schemaFile, "utf-8");
+    }
+
+    let apiSchema = super.getApiSchema(types.concat(baseSchema), []);
 
     let schema = fileLoader(__dirname + '/schema/api/', {
       recursive: true,
     });
 
     apiSchema = mergeTypes([apiSchema.concat(schema)], { all: true });
+
 
     return apiSchema;
 
@@ -77,21 +81,14 @@ class RouteModule extends PrismaModule {
       }
     `;
   }
-
-
-  // getExcludableApiTypes(){
-
-  //   return super.getExcludableApiTypes([
-  //   ]);
-
-  // }
-
+ 
 
   getResolvers() {
 
     const resolvers = super.getResolvers();
 
     Object.assign(resolvers.Query, {
+      routes: this.routes,
       route: this.route,
       routesConnection: this.routesConnection,
     });
@@ -109,6 +106,12 @@ class RouteModule extends PrismaModule {
   route(source, args, ctx, info) {
 
     return ctx.db.query.route({}, info);
+  }
+
+
+  routes(source, args, ctx, info) {
+
+    return ctx.db.query.routes({}, info);
   }
 
 
