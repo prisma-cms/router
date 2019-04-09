@@ -1,0 +1,7 @@
+
+type RouteResponse{
+  success: Boolean!
+  message: String
+  errors: [Error!]!
+  data: Route
+}

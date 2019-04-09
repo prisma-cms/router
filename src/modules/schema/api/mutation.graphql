@@ -1,0 +1,18 @@
+type Error {
+  key: String!
+  message: String!
+}
+
+type Mutation {
+
+
+  createRouteProcessor(
+    data: RouteCreateInput!
+  ): RouteResponse!
+
+  updateRouteProcessor(
+    data: RouteUpdateInput!
+    where: RouteWhereUniqueInput!
+  ): RouteResponse!
+
+}

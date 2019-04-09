@@ -1,127 +1,169 @@
 
 
-import chalk from "chalk";
-
+import PrismaProcessor from "@prisma-cms/prisma-processor";
 import PrismaModule from "@prisma-cms/prisma-module";
 
-import MergeSchema from 'merge-graphql-schemas';
+import chalk from "chalk";
 
-import fs from "fs";
-
-import path from 'path';
-
-const moduleURL = new URL(import.meta.url);
-
-const __dirname = path.dirname(moduleURL.pathname);
-
-const { createWriteStream, unlinkSync } = fs;
-
-const { fileLoader, mergeTypes } = MergeSchema
+class RouteProcessor extends PrismaProcessor {
 
 
+  constructor(props) {
 
-class RouteModule extends PrismaModule {
+    super(props);
 
- 
+    this.objectType = "Route";
 
-  getSchema(types = []) {
+    this.private = true;
+
+  }
 
 
-    let schema = fileLoader(__dirname + '/schema/database/', {
-      recursive: true,
+  async create(objectType, args, info) {
+
+
+    let {
+      data: {
+        ...data
+      },
+      ...otherArgs
+    } = args;
+
+
+    const {
+      id: currentUserId,
+    } = await this.getUser(true);
+
+
+    Object.assign(data, {
+      CreatedBy: {
+        connect: {
+          id: currentUserId,
+        },
+      },
     });
 
-
-    if (schema) {
-      types = types.concat(schema);
-    }
-
-
-    let typesArray = super.getSchema(types);
-
-    return typesArray;
+    return super.create(objectType, {
+      data,
+      ...otherArgs,
+    }, info);
 
   }
 
 
-  getApiSchema(types = []) {
+  async mutate(objectType, args, into) {
 
-
-    let baseSchema = [];
-
-    let schemaFile = __dirname + "/../schema/generated/prisma.graphql";
-
-    if (fs.existsSync(schemaFile)) {
-      baseSchema = fs.readFileSync(schemaFile, "utf-8");
-    }
-
-    let apiSchema = super.getApiSchema(types.concat(baseSchema), []);
-
-    let schema = fileLoader(__dirname + '/schema/api/', {
-      recursive: true,
-    });
-
-    apiSchema = mergeTypes([apiSchema.concat(schema)], { all: true });
-
-
-    return apiSchema;
-
+    return super.mutate(objectType, args);
   }
-
-
-  getRouteComponentTypes(types = []) {
-
-    types = types.concat([
-      "Resource",
-    ]);
-
-    return `
-      enum RouteComponent{
-        ${types.join(",\n")}
-      }
-    `;
-  }
- 
-
-  getResolvers() {
-
-    const resolvers = super.getResolvers();
-
-    Object.assign(resolvers.Query, {
-      routes: this.routes,
-      route: this.route,
-      routesConnection: this.routesConnection,
-    });
-
-    Object.assign(resolvers.Mutation, {
-    });
-
-    Object.assign(resolvers, {
-    });
-
-    return resolvers;
-  }
-
-
-  route(source, args, ctx, info) {
-
-    return ctx.db.query.route({}, info);
-  }
-
-
-  routes(source, args, ctx, info) {
-
-    return ctx.db.query.routes({}, info);
-  }
-
-
-  routesConnection(source, args, ctx, info) {
-
-    return ctx.db.query.routesConnection({}, info);
-  }
-
 
 }
 
 
-export default RouteModule;
+
+
+class Module extends PrismaModule {
+
+
+  constructor(props = {}) {
+
+    super(props);
+
+    // this.mergeModules([ 
+    // ]);
+
+
+    this.RouteResponse = {
+      data: (source, args, ctx, info) => {
+
+        const {
+          id,
+        } = source && source.data || {};
+
+        return id ? ctx.db.query.route({
+          where: {
+            id,
+          },
+        }, info) : null;
+
+      },
+    }
+
+  }
+
+
+
+  getResolvers() {
+
+
+    return {
+      Query: {
+        route: this.route.bind(this),
+        routes: this.routes.bind(this),
+        routesConnection: this.routesConnection.bind(this),
+      },
+      Mutation: {
+        createRouteProcessor: this.createRouteProcessor.bind(this),
+        updateRouteProcessor: this.updateRouteProcessor.bind(this),
+        deleteRoute: this.deleteRoute.bind(this),
+        deleteManyRoutes: this.deleteManyRoutes.bind(this),
+      },
+      Subscription: {
+        route: {
+          subscribe: async (parent, args, ctx, info) => {
+
+            return ctx.db.subscription.route(args, info)
+          },
+        },
+      },
+      RouteResponse: this.RouteResponse,
+    }
+
+  }
+
+
+  getProcessor(ctx) {
+    return new (this.getProcessorClass())(ctx);
+  }
+
+  getProcessorClass() {
+    return RouteProcessor;
+  }
+
+
+  routes(source, args, ctx, info) {
+    return ctx.db.query.routes({}, info);
+  }
+
+  route(source, args, ctx, info) {
+    return ctx.db.query.route({}, info);
+  }
+
+  routesConnection(source, args, ctx, info) {
+    return ctx.db.query.routesConnection({}, info);
+  }
+
+
+  createRouteProcessor(source, args, ctx, info) {
+
+    return this.getProcessor(ctx).createWithResponse("Route", args, info);
+  }
+
+  updateRouteProcessor(source, args, ctx, info) {
+
+    return this.getProcessor(ctx).updateWithResponse("Route", args, info);
+  }
+
+
+  deleteRoute(source, args, ctx, info) {
+    return ctx.db.mutation.deleteRoute({}, info);
+  }
+
+
+  deleteManyRoutes(source, args, ctx, info) {
+    return ctx.db.mutation.deleteManyRoutes({}, info);
+  }
+
+}
+
+
+export default Module;
