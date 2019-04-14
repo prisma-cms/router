@@ -1,3 +1,9 @@
+1.2.1
+==================================
+- Added Template:createdAt
+- Added Template:updatedAt
+- Fix create Template
+
 1.2.0
 ==================================
 - Added Template

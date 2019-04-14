@@ -1,6 +1,8 @@
 
 type Template {
   id: ID! @unique
+  createdAt: DateTime!
+  updatedAt: DateTime!
   name: String
   description: String
   # component: String!

@@ -27,6 +27,8 @@ class TemplateProcessor extends PrismaProcessor {
 
     let {
       data: {
+        props = {},
+        components = [],
         Parent,
         ...data
       },
@@ -54,7 +56,7 @@ class TemplateProcessor extends PrismaProcessor {
 
     }
     else {
-      
+
       const parent = await db.query.template({
         where: Parent.connect,
       });
@@ -67,6 +69,8 @@ class TemplateProcessor extends PrismaProcessor {
 
 
     Object.assign(data, {
+      props,
+      components,
       Parent,
       CreatedBy: {
         connect: {
@@ -85,6 +89,33 @@ class TemplateProcessor extends PrismaProcessor {
 
 
   async mutate(objectType, args, into) {
+
+    let {
+      data: {
+        props,
+        components,
+        ...data
+      },
+    } = args;
+
+    if (props !== undefined && !props) {
+      props = {};
+    }
+
+    if (components !== undefined && !components) {
+      components = [];
+    }
+
+
+    Object.assign(data, {
+      props,
+      components,
+    });
+
+
+    Object.assign(args, {
+      data,
+    });
 
     return super.mutate(objectType, args);
   }
