@@ -6,8 +6,6 @@ import PrismaModule from "@prisma-cms/prisma-module";
 
 import chalk from "chalk";
 
-import TemplateModule from "./Template";
-
 import MergeSchema from 'merge-graphql-schemas';
 
 import path from 'path';
@@ -85,7 +83,6 @@ class RouteModule extends PrismaModule {
     super(props);
 
     this.mergeModules([ 
-      TemplateModule,
     ]);
 
 
