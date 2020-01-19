@@ -15,13 +15,13 @@ type Mutation {
     where: RouteWhereUniqueInput!
   ): RouteResponse!
 
-  createTemplateProcessor(
-    data: TemplateCreateInput!
-  ): TemplateResponse!
+  # createTemplateProcessor(
+  #   data: TemplateCreateInput!
+  # ): TemplateResponse!
 
-  updateTemplateProcessor(
-    data: TemplateUpdateInput!
-    where: TemplateWhereUniqueInput!
-  ): TemplateResponse!
+  # updateTemplateProcessor(
+  #   data: TemplateUpdateInput!
+  #   where: TemplateWhereUniqueInput!
+  # ): TemplateResponse!
 
 }

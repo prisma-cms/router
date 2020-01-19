@@ -1,6 +1,6 @@
 
 type Route {
-  id: ID! @unique
+  id: ID! @unique @id
   name: String
   path: String! @unique
   exact: Boolean! @default(value: true)

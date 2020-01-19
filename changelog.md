@@ -1,3 +1,7 @@
+1.3.1
+==================================
+- Update schema
+
 1.3.0
 ==================================
 - Breaking changes: moved Template module into @prisma-cms/marketplace-module
